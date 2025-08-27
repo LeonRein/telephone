@@ -1,19 +1,10 @@
 from assistant import Assistant
 from tts import TTS
-import asyncio
-from asyncio import Task
 
 def read_system_prompt():
     with open("system_prompt.txt", "r") as file:
         return file.read().strip()
     
-def chat(user_input: str, assistant: Assistant):
-    for response in assistant.chat(user_input):
-        print(response, end="", flush=True)
-    print()  # For newline after the assistant's response
-    print("You: ", end="", flush=True)
-
-
 def main():
     system_prompt = read_system_prompt()
     assistant = Assistant(system_prompt)
