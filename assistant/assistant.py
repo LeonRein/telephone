@@ -3,6 +3,7 @@ from .memory import Memory
 from queue import Queue
 from threading import Thread, Event
 from typing import Callable
+import re
 
 # MODEL = "magistral"
 MODEL = "gemma3:27b"
@@ -12,7 +13,7 @@ class Assistant(Thread):
         self.memory = Memory(system_prompt)
         self.client : Client = Client()
         self._abort = Event()
-        self._input_queue = Queue()
+        self._input_queue: Queue[str | None] = Queue()
         self._on_partial_response: Callable[[str], None] | None = None
         self._on_sentence_response: Callable[[str], None] | None = None
         self._on_finish: Callable[[], None] | None = None
@@ -28,26 +29,30 @@ class Assistant(Thread):
             response_message: str = ""
             sentence: str = ""
 
-            part: ChatResponse
-            for part in self.client.chat(model=MODEL, messages=self.memory.get_messages(), stream=True):
+            for part in self.client.chat(model=MODEL, messages=self.memory.get_messages(), stream=True):  # type: ignore
+                part: ChatResponse
                 if part.message.role != "assistant":
                     continue
 
-                response_message += part.message.content
-                sentence += part.message.content
+                if part.message.content:
+                    response_message += part.message.content
+                    sentence += part.message.content
 
-                if any(sentence.endswith(p) for p in [".", "!", "?", "\n"]):
-                    if self._on_sentence_response:
-                        self._on_sentence_response(sentence)
-                    sentence = ""
+                if any(sentence.endswith(p) for p in [".", "!", "?", ":", "\n"]):
+                    sentence = sentence.replace("\n", " ")
+                    if re.search(r"\w", sentence):
+                        if self._on_sentence_response:
+                            self._on_sentence_response(sentence)
+                        sentence = ""
 
                 if self._abort.is_set():
                     break
 
-                if self._on_partial_response:
+                if self._on_partial_response and part.message.content:
                     self._on_partial_response(part.message.content)
 
-            if self._on_sentence_response and len(sentence) > 0:
+            sentence = sentence.replace("\n", " ")
+            if self._on_sentence_response and len(sentence) > 0 and re.search(r"\w", sentence):
                 self._on_sentence_response(sentence)
 
             if self._on_finish:

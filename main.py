@@ -30,6 +30,7 @@ def main():
     while True:
         user_input: str = input()
         assistant.abort()
+        tts.abort()
         assistant.chat(user_input)
 
 if __name__ == "__main__":

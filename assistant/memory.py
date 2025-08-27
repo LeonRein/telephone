@@ -1,6 +1,8 @@
+from typing import List, Dict
+
 class Memory:
     def __init__(self, system_prompt: str | None = None):
-        self._messages = []
+        self._messages : List[Dict[str, str]] = []
         if system_prompt:
             self.add_system_message(system_prompt)
 
