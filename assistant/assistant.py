@@ -51,9 +51,10 @@ class Assistant(Thread):
                 if self._on_partial_response and part.message.content:
                     self._on_partial_response(part.message.content)
 
-            sentence = sentence.replace("\n", " ")
-            if self._on_sentence_response and len(sentence) > 0 and re.search(r"\w", sentence):
-                self._on_sentence_response(sentence)
+            if not self._abort.is_set():
+                sentence = sentence.replace("\n", " ")
+                if self._on_sentence_response and len(sentence) > 0 and re.search(r"\w", sentence):
+                    self._on_sentence_response(sentence)
 
             if self._on_finish:
                 self._on_finish()
