@@ -11,5 +11,13 @@ dependencies = [
     "pyaudio>=0.2.14",
     "pyyaml>=6.0.2",
     "rich>=14.1.0",
+    "soundfile>=0.13.1",
+    "speechrecognition[faster-whisper]>=3.14.3",
     "ty>=0.0.1a19",
 ]
+
+[tool.ruff.lint]
+select = ["ALL"]
+
+[tool.ruff]
+line-length = 120
