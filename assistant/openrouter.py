@@ -8,7 +8,7 @@ import re
 from utils.secrets import OPENROUTER_API_KEY
 
 # MODEL = "magistral"
-MODEL = "openai/gpt-5"
+MODEL = "google/gemini-2.5-pro"
 
 class OpenRouterAssistant(Assistant):
     def __init__(self, system_prompt: str):
