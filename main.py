@@ -1,4 +1,4 @@
-from assistant import Assistant
+from assistant import OpenRouterAssistant as Assistant
 from tts import TTS
 
 def read_system_prompt():
