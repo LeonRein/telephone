@@ -8,6 +8,7 @@ wheels/
 
 # Virtual environments
 .venv
+de_DE-thorsten-high.onnx.json
 de_DE-thorsten-high.onnx
 secrets.yaml
 hokuspokus.onnx.json
